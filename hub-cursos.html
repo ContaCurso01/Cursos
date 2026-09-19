@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hub de Cursos</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg-alt: #171a23;
+    --card-bg: #1b1f2a;
+    --card-border: #2a2f3d;
+    --text: #eef0f5;
+    --text-muted: #9aa1b2;
+    --accent: #7c5cff;
+    --accent-2: #33d6b0;
+    --shadow: 0 10px 30px rgba(0,0,0,0.35);
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f5f6fa;
+      --bg-alt: #ffffff;
+      --card-bg: #ffffff;
+      --card-border: #e4e6ef;
+      --text: #1a1c24;
+      --text-muted: #63697a;
+      --shadow: 0 10px 30px rgba(20,20,40,0.08);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f5f6fa;
+    --bg-alt: #ffffff;
+    --card-bg: #ffffff;
+    --card-border: #e4e6ef;
+    --text: #1a1c24;
+    --text-muted: #63697a;
+    --shadow: 0 10px 30px rgba(20,20,40,0.08);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", "Inter", system-ui, -apple-system, sans-serif;
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(124,92,255,0.15), transparent 40%),
+      radial-gradient(circle at 85% 85%, rgba(51,214,176,0.12), transparent 40%);
+    background-attachment: fixed;
+  }
+
+  header {
+    text-align: center;
+    padding: 64px 20px 32px;
+  }
+
+  header h1 {
+    margin: 0 0 12px;
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: -0.5px;
+  }
+
+  header p {
+    color: var(--text-muted);
+    font-size: 16px;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .search-wrap {
+    max-width: 480px;
+    margin: 28px auto 0;
+    padding: 0 20px;
+  }
+
+  #search {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 14px;
+    border: 1px solid var(--card-border);
+    background: var(--card-bg);
+    color: var(--text);
+    font-size: 15px;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+
+  #search:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124,92,255,0.25);
+  }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 22px;
+  }
+
+  .card {
+    position: relative;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 18px;
+    padding: 26px 22px 22px;
+    text-decoration: none;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transform: translateY(0);
+    transition: transform .25s ease, border-color .25s ease;
+  }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--grad-a, #7c5cff), var(--grad-b, #33d6b0));
+    opacity: 0;
+    transition: opacity .25s ease;
+    z-index: 0;
+  }
+
+  .card:hover {
+    transform: translateY(-6px);
+    border-color: transparent;
+  }
+
+  .card:hover::before {
+    opacity: 0.12;
+  }
+
+  .card > * { position: relative; z-index: 1; }
+
+  .icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    background: linear-gradient(135deg, var(--grad-a, #7c5cff), var(--grad-b, #33d6b0));
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+  }
+
+  .card h2 {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 700;
+  }
+
+  .card p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.5;
+    flex-grow: 1;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .tag svg {
+    width: 14px;
+    height: 14px;
+    transition: transform .2s ease;
+  }
+
+  .card:hover .tag svg {
+    transform: translateX(4px);
+  }
+
+  footer {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    padding: 24px;
+  }
+
+  .empty {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 40px 0;
+    display: none;
+  }
+
+  .theme-toggle {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+  }
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" id="themeToggle">🌓 Tema</button>
+
+<header>
+  <h1>Hub de Cursos</h1>
+  <p>Todos os cursos em um só lugar. Clique em um card para começar a estudar.</p>
+  <div class="search-wrap">
+    <input type="text" id="search" placeholder="Buscar curso...">
+  </div>
+</header>
+
+<main>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty">Nenhum curso encontrado.</div>
+</main>
+
+<footer>Feito com HTML, CSS e JS ✦</footer>
+
+<script>
+  const courses = [
+    {
+      title: "Curso de Kotlin",
+      desc: "Aprenda Kotlin do zero: sintaxe, orientação a objetos e boas práticas para Android e back-end.",
+      url: "https://contacurso01.github.io/CursoKotlin/",
+      icon: "🟣",
+      gradA: "#7f52ff",
+      gradB: "#c39bff",
+      tag: "Programação"
+    },
+    {
+      title: "Curso de Go",
+      desc: "Domine a linguagem Go: concorrência, performance e construção de aplicações robustas.",
+      url: "https://contacurso01.github.io/CursoGo/",
+      icon: "🐹",
+      gradA: "#00add8",
+      gradB: "#5bd6ff",
+      tag: "Programação"
+    },
+    {
+      title: "Curso de Godot",
+      desc: "Crie seus próprios jogos usando a engine Godot, do básico ao avançado.",
+      url: "https://contacurso01.github.io/CursoGodot/",
+      icon: "🎮",
+      gradA: "#478cbf",
+      gradB: "#8fd3f4",
+      tag: "Game Dev"
+    },
+    {
+      title: "Curso de Roblox",
+      desc: "Aprenda a criar experiências e jogos no Roblox Studio usando Lua.",
+      url: "https://senhordev01.github.io/Roblox/",
+      icon: "🧱",
+      gradA: "#e2231a",
+      gradB: "#ff8a80",
+      tag: "Game Dev"
+    }
+  ];
+
+  const grid = document.getElementById('grid');
+  const empty = document.getElementById('empty');
+  const search = document.getElementById('search');
+
+  function arrowIcon() {
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
+  }
+
+  function render(list) {
+    grid.innerHTML = "";
+    if (list.length === 0) {
+      empty.style.display = "block";
+      return;
+    }
+    empty.style.display = "none";
+    list.forEach(c => {
+      const a = document.createElement('a');
+      a.href = c.url;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.className = "card";
+      a.style.setProperty('--grad-a', c.gradA);
+      a.style.setProperty('--grad-b', c.gradB);
+      a.innerHTML = `
+        <div class="icon">${c.icon}</div>
+        <h2>${c.title}</h2>
+        <p>${c.desc}</p>
+        <span class="tag">${c.tag} · Acessar ${arrowIcon()}</span>
+      `;
+      grid.appendChild(a);
+    });
+  }
+
+  render(courses);
+
+  search.addEventListener('input', () => {
+    const q = search.value.trim().toLowerCase();
+    const filtered = courses.filter(c =>
+      c.title.toLowerCase().includes(q) ||
+      c.desc.toLowerCase().includes(q) ||
+      c.tag.toLowerCase().includes(q)
+    );
+    render(filtered);
+  });
+
+  const themeToggle = document.getElementById('themeToggle');
+  themeToggle.addEventListener('click', () => {
+    const root = document.documentElement;
+    const current = root.getAttribute('data-theme');
+    if (current === 'dark') {
+      root.setAttribute('data-theme', 'light');
+    } else if (current === 'light') {
+      root.removeAttribute('data-theme');
+    } else {
+      root.setAttribute('data-theme', 'dark');
+    }
+  });
+</script>
+
+</body>
+</html>
